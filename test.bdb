@@ -1,1 +1,4 @@
-(INDEX 1 (STRING hei "hei"))
+BBool true
+BNumber 234
+BString Hei på deg
+BList [BBool true]
