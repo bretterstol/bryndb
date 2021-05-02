@@ -24,12 +24,6 @@ data BValue =
 --	where showO (n, v) = "[" ++ n ++ " : " ++ show v ++ "]"
 
 
-convertStringToBValue :: (String, String) -> Maybe BValue
-convertStringToBValue (b, v) = case b of
-  "BBool" -> convertToBool v
-  "BNumber" -> convertToNumber v
-  "BString" -> Just (BString v)
-  _ ->  Nothing
 
 convertToBool :: String -> Maybe BValue
 convertToBool b = case b of

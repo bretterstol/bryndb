@@ -49,9 +49,43 @@ testParse = do
   getResult $ parseB file
 
 convertTypes :: [[String]] -> [Maybe BValue]
-convertTypes = map (convertStringToBValue . convertListToTup)
+convertTypes = map (convertStringToBValue . convertListToTuple)
 
-convertListToTup :: [String] -> (String, String)
-convertListToTup (x:y:_) = (x,y)
+convertListToTuple :: [String] -> (String, String)
+convertListToTuple (x:y:_) = (x,y)
 
+convertStringToBValue :: (String, String) -> Maybe BValue
+convertStringToBValue (b, v) = case b of
+  "BBool" -> convertToBool v
+  "BNumber" -> convertToNumber v
+  "BString" -> Just (BString v)
+  "BList" -> convertTypes $ parseList v
+  _ ->  Nothing
+
+testListParser :: String -> Maybe BValue
+testListParser s = do
+  converted <- convertTypes $ parseList s
+  return Just (BNull)
+
+parseList :: GenParser Char st [[String]]
+parseList = do
+  list <- many readBList
+  eof
+  return list
+
+readBList :: GenParser Char st [String]
+readBList = do
+  listData <- getListData
+  listEOL
+  return listData
+
+
+getListData :: GenParser Char st [String]
+getListData = do
+  listData <- many (noneOf "[]")
+  convertedData <- readTypes
+  return convertedData
+
+listEOL :: GenParser Char st Char
+listEOL = char ']'
 
