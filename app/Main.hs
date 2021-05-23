@@ -4,14 +4,7 @@ import ParseFile
 import BdbValues
 
 main :: IO ()
-main = testParse
+main = do
+  file  <- readFile "test2.bdb"
+  print $ parseBDB file
 
-getTest :: BValue
-getTest = BObject [("Test", BObject [
-	("TestTall", BNumber 1),
-	("TestString", BString "test"),
-	("InnerObj", BObject [("InnerList", BList [
-		(BBool True)])])])]
-
-printTest :: IO()
-printTest = print getTest

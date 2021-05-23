@@ -3,13 +3,15 @@ module BdbValues where
 import Data.List (intercalate)
 import Control.Exception.Base (try)
 import Text.Read (readMaybe)
+
+
 data BValue =
 	BNull |
 	BNumber Float |
 	BString String |
 	BBool Bool |
-	BList [BValue] |
-	BObject [(String, BValue)]
+	BList [BValue] | 
+	BMap [(String, BValue)]
 	deriving (Eq, Show)
 
 --instance Show BValue where
