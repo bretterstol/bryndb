@@ -1,10 +1,9 @@
 module Main where
 
-import ParseFile
-import BdbValues
+import ParserToken
 
 main :: IO ()
 main = do
-  file  <- readFile "test2.bdb"
-  print $ parseBDB file
+  file  <- readFile "test.bdb"
+  print $ testParse file
 

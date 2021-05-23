@@ -86,3 +86,7 @@ readKey = many $ noneOf " ,\n "
 
 readValue :: GenParser Char st String
 readValue = (char ',' >> many alphaNum) <|> return ""
+
+
+
+
