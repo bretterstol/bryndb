@@ -1,2 +1,2 @@
-Name BMap [(Hei BString test)]
+BMap [(Hei,BString "test"),(P,BNumber 1),(TEST,BString "Hei"),(Heier,BBool True),(Nested,BMap [(NTESTT,BString "NESTED")])]
 

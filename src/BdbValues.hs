@@ -10,7 +10,7 @@ data BValue =
 	BNumber Float |
 	BString String |
 	BBool Bool |
-	BList [BValue] | 
+	BList [BValue] |
 	BMap [(String, BValue)]
 	deriving (Eq, Show)
 
