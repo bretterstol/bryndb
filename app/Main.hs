@@ -1,9 +1,11 @@
 module Main where
 
-import ParserFull
+import Search
+import BdbValues
+
+testVal :: BValue
+testVal = BMap [("Test",BString "test"),("Ny test",BNumber 3),("nested",BMap [("Inni",BString "HEI PÅ DEG")]),("nummer", BNumber 3)]
 
 main :: IO ()
-main = do
-  file  <- readFile "test2.bdb"
-  print $ testParse file
+main = do print $ find "" testVal
 
