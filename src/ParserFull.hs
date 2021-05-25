@@ -3,6 +3,7 @@ module ParserFull where
 import Text.ParserCombinators.Parsec
 import BdbValues
 import Control.Monad (liftM2)
+import Text.Read (readMaybe)
 
 testParse :: String -> Either ParseError BValue
 testParse = parse startParse "feil"
@@ -62,21 +63,27 @@ parseString = do
 parseNumber :: GenParser Char st BValue
 parseNumber = do
    anum <- many alphaNum
-   return $ BNumber (readNum anum)
+   return $ getNum anum
 
 parseBool :: GenParser Char st BValue
 parseBool = do
   b <- many letter
-  return $ BBool $ readBool b
+  return $ getBool b
 
-readBool :: String -> Bool
+getBool :: String -> BValue
+getBool b = maybe BNull BBool (readBool b)
+
+readBool :: String -> Maybe Bool
 readBool b = case b of
-  "True" -> True
-  "False" -> False
-  _ -> False
+  "True" -> Just True
+  "False" -> Just False
+  _ -> Nothing
 
-readNum :: String -> Float
-readNum anum = read anum :: Float
+getNum :: String -> BValue
+getNum anum = maybe BNull BNumber (readNum anum)
+
+readNum :: String -> Maybe Float
+readNum anum = readMaybe anum :: Maybe Float
 
 quote :: GenParser Char st Char
 quote = char '"'
