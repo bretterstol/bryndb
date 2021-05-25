@@ -15,34 +15,31 @@ startParse = do
   handleTypes start
 
 parseMap :: GenParser Char st BValue
-parseMap = do
-  leftBracket
-  res <- getTupes
-  rightBracket
-  return $ BMap $ res
+parseMap = between leftBracket rightBracket $ BMap <$> getTupeList
 
-getTupes :: GenParser Char st [(String, BValue)]
-getTupes = do
+getTupeList :: GenParser Char st [(String, BValue)]
+getTupeList = do
   first <- parseTup
   rest <- nextTup
   return $ first : rest
 
 
 nextTup :: GenParser Char st [(String, BValue)]
-nextTup = (comma >> getTupes) <|> return [] <?> "Nextup failed"
+nextTup = (comma >> getTupeList) <|> return [] <?> "Nextup failed"
 
 endOfMap :: GenParser Char st Char
 endOfMap = try comma <|> rightBracket <?> "End failed parseMap"
 
 parseTup :: GenParser Char st (String, BValue)
-parseTup = do
-  leftParens
+parseTup = between leftParens rightParens getTupes
+
+getTupes :: GenParser Char st (String, BValue)
+getTupes = do 
   key <- many $ noneOf ","
   comma
   t <- many $ noneOf " "
   whiteSpace
   value <- handleTypes t
-  rightParens
   return (key, value)
 
 handleTypes :: String -> GenParser Char st BValue
@@ -54,21 +51,13 @@ handleTypes t = case t of
   _ -> return BNull
 
 parseString :: GenParser Char st BValue
-parseString = do
-  quote
-  st <- many $ noneOf "\""
-  quote
-  return $ BString st
+parseString = between quote quote $ BString <$> many (noneOf "\"")
 
 parseNumber :: GenParser Char st BValue
-parseNumber = do
-   anum <- many alphaNum
-   return $ getNum anum
+parseNumber = getNum <$> many alphaNum
 
 parseBool :: GenParser Char st BValue
-parseBool = do
-  b <- many letter
-  return $ getBool b
+parseBool = getBool <$> many letter
 
 getBool :: String -> BValue
 getBool b = maybe BNull BBool (readBool b)
