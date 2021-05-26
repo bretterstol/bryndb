@@ -23,6 +23,7 @@ dependencies:
 - base >= 4.7 && < 5
 - text
 - parsec
+- directory
 
 library:
   source-dirs: src
