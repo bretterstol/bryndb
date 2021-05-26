@@ -1,25 +1,26 @@
 module Search where
 import BdbValues
-import Data.Maybe (mapMaybe)
-
+import Data.Maybe (isJust)
 
 
 find :: String -> BValue -> Maybe BValue
-find searchKey testVal = getList testVal >>= searchList searchKey
+find searchKey testVal = if keyIsInBValue searchKey testVal then Just testVal else Nothing
 
+keyIsInBValue :: String -> BValue -> Bool
+keyIsInBValue searchKey testVal = isJust $ fmap (searchList searchKey) (getList testVal)
 
-searchList :: String -> [(String, BValue)] -> Maybe BValue
-searchList searchKey val = getFirst $ mapMaybe (findKey searchKey) val
+searchList :: String -> [(String, BValue)] -> Bool
+searchList searchKey val = hasElem $ map (findKey searchKey) val
 
-getFirst :: [a] -> Maybe a
-getFirst [] = Nothing
-getFirst (a:_) = Just a
+hasElem :: [a] -> Bool
+hasElem [] = False
+hasElem _ = True
 
-findKey :: String -> (String, BValue) -> Maybe BValue
+findKey :: String -> (String, BValue) -> Bool
 findKey searchKey (key, val)
-  | key == searchKey = Just val
-  | isMap val = find searchKey val
-  | otherwise = Nothing
+  | key == searchKey = True
+  | isMap val = keyIsInBValue searchKey val
+  | otherwise = False
 
 isMap :: BValue -> Bool
 isMap a = case a of
