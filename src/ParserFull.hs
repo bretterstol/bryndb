@@ -5,8 +5,8 @@ import BdbValues
 import Control.Monad (liftM2)
 import Text.Read (readMaybe)
 
-testParse :: String -> Either ParseError BValue
-testParse = parse startParse "feil"
+parseFile :: String -> Either ParseError BValue
+parseFile = parse startParse "Parse error"
 
 startParse :: GenParser Char st BValue
 startParse = do
