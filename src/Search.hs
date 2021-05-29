@@ -4,9 +4,9 @@ import Data.Maybe (catMaybes)
 import Utils
 
 find :: (String, BValue) -> BValue -> Either String BValue
-find (searchKey,searchVal) testVal = if keyValueFound then Right testVal else Left "Not found"
+find (searchKey,searchVal) doc = if keyValueFound then Right doc else Left "Not found"
   where keyValueFound = checkValue keyValue searchVal
-        keyValue = getKeyValue searchKey testVal
+        keyValue = getKeyValue searchKey doc
 
 checkValue :: Maybe BValue -> BValue -> Bool
 checkValue keyVal searchVal = case keyVal of
@@ -14,7 +14,7 @@ checkValue keyVal searchVal = case keyVal of
   _ -> False
 
 getKeyValue :: String -> BValue -> Maybe BValue
-getKeyValue searchKey testVal = takeKeyValue $ fmap (searchList searchKey) (getList testVal)
+getKeyValue searchKey doc = takeKeyValue $ fmap (searchList searchKey) (getList doc)
 
 takeKeyValue :: Maybe [Maybe BValue] -> Maybe BValue
 takeKeyValue vals = vals >>= getResult . catMaybes
