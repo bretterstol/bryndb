@@ -1,10 +1,12 @@
 module Search where
 import BdbValues
-import Data.Maybe (catMaybes, isJust)
+import Data.Maybe (catMaybes)
 import Utils
 
 find :: (String, BValue) -> BValue -> Either String BValue
-find (searchKey,searchVal) testVal = if checkValue (getKeyValue searchKey testVal) searchVal then Right testVal else Left "Not found"
+find (searchKey,searchVal) testVal = if keyValueFound then Right testVal else Left "Not found"
+  where keyValueFound = checkValue keyValue searchVal
+        keyValue = getKeyValue searchKey testVal
 
 checkValue :: Maybe BValue -> BValue -> Bool
 checkValue keyVal searchVal = case keyVal of
