@@ -24,6 +24,7 @@ dependencies:
 - text
 - parsec
 - directory
+- uuid
 
 library:
   source-dirs: src

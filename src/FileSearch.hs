@@ -8,17 +8,17 @@ import Control.Monad.IO.Class (liftIO)
 import Data.Either
 import GHC.Base (IO)
 
-search :: String -> IO [Either String BValue]
-search key = do
+search :: (String, BValue) -> IO [Either String BValue]
+search searchKeyValue = do
   filePaths <- listDirectory "./data"
   files <- mapM (readFile . ("./data/" ++)) filePaths
-  return $ searchFiles key files
+  return $ searchFiles searchKeyValue files
 
-searchFiles :: String -> [String] -> [Either String BValue]
+searchFiles :: (String,BValue) -> [String] -> [Either String BValue]
 searchFiles key = map (searchFile key)
 
-searchFile :: String -> String -> Either String BValue
-searchFile key file = mapLeft (const "ParseError") (parseFile file) >>= find key
+searchFile :: (String,BValue) -> String -> Either String BValue
+searchFile key file = mapLeft (const "Teit ass") (parseFile file) >>= find key
 
 mapLeft :: (a -> b) -> Either a c -> Either b c
 mapLeft func val = case val of

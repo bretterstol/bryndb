@@ -35,7 +35,7 @@ parseTup = between leftParens rightParens getTuples
 
 getTuples :: GenParser Char st (String, BValue)
 getTuples = do 
-  key <- many $ noneOf ", "
+  key <- between quote quote (many (noneOf "\""))
   tupleSeparator
   t <- many $ noneOf " "
   whiteSpace
@@ -57,7 +57,7 @@ parseString :: GenParser Char st BValue
 parseString = between quote quote $ BString <$> many (noneOf "\"")
 
 parseNumber :: GenParser Char st BValue
-parseNumber = getNum <$> many alphaNum
+parseNumber = getNum <$> many (noneOf ")]")
 
 parseBool :: GenParser Char st BValue
 parseBool = getBool <$> many letter
