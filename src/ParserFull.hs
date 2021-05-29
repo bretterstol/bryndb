@@ -15,28 +15,28 @@ startParse = do
   handleTypes start
 
 parseMap :: GenParser Char st BValue
-parseMap = between leftBracket rightBracket $ BMap <$> getTupeList
+parseMap = between leftBracket rightBracket $ BMap <$> getTupleList
 
-getTupeList :: GenParser Char st [(String, BValue)]
-getTupeList = do
+getTupleList :: GenParser Char st [(String, BValue)]
+getTupleList = do
   first <- parseTup
   rest <- nextTup
   return $ first : rest
 
 
 nextTup :: GenParser Char st [(String, BValue)]
-nextTup = (comma >> getTupeList) <|> return [] <?> "Nextup failed"
+nextTup = (tupleSeparator >> getTupleList) <|> return [] <?> "Nextup failed"
 
 endOfMap :: GenParser Char st Char
 endOfMap = try comma <|> rightBracket <?> "End failed parseMap"
 
 parseTup :: GenParser Char st (String, BValue)
-parseTup = between leftParens rightParens getTupes
+parseTup = between leftParens rightParens getTuples
 
-getTupes :: GenParser Char st (String, BValue)
-getTupes = do 
-  key <- many $ noneOf ","
-  comma
+getTuples :: GenParser Char st (String, BValue)
+getTuples = do 
+  key <- many $ noneOf ", "
+  tupleSeparator
   t <- many $ noneOf " "
   whiteSpace
   value <- handleTypes t
@@ -49,6 +49,9 @@ handleTypes t = case t of
   "BBool" -> parseBool
   "BMap" -> parseMap
   _ -> return BNull
+
+tupleSeparator :: GenParser Char st String
+tupleSeparator = try (string ", ") <|> string ","
 
 parseString :: GenParser Char st BValue
 parseString = between quote quote $ BString <$> many (noneOf "\"")
