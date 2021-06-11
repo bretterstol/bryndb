@@ -4,9 +4,6 @@ import BdbValues
 import ParserFull
 import Search
 import System.Directory
-import Control.Monad.IO.Class (liftIO)
-import Data.Either
-import GHC.Base (IO)
 
 search :: (String, BValue) -> IO [Either String BValue]
 search searchKeyValue = do
