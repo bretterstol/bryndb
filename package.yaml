@@ -25,6 +25,7 @@ dependencies:
 - parsec
 - directory
 - uuid
+- async
 
 library:
   source-dirs: src
