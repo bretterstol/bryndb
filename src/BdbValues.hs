@@ -1,7 +1,5 @@
 module BdbValues where
 
-import Data.List (intercalate)
-import Control.Exception.Base (try)
 import Text.Read (readMaybe)
 
 

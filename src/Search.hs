@@ -1,26 +1,36 @@
 module Search where
 import BdbValues
-import Data.Maybe (isJust)
+import Data.Maybe (catMaybes)
+import Utils
 
+find :: (String, BValue) -> BValue -> Either String BValue
+find (searchKey,searchVal) doc = if keyValueFound then Right doc else Left "Not found"
+  where keyValueFound = checkValue keyValue searchVal
+        keyValue = getKeyValue searchKey doc
 
-find :: String -> BValue -> Maybe BValue
-find searchKey testVal = if keyIsInBValue searchKey testVal then Just testVal else Nothing
+checkValue :: Maybe BValue -> BValue -> Bool
+checkValue keyVal searchVal = case keyVal of
+  Just kv -> kv == searchVal
+  _ -> False
 
-keyIsInBValue :: String -> BValue -> Bool
-keyIsInBValue searchKey testVal = isJust $ fmap (searchList searchKey) (getList testVal)
+getKeyValue :: String -> BValue -> Maybe BValue
+getKeyValue searchKey doc = takeKeyValue $ fmap (searchList searchKey) (getList doc)
 
-searchList :: String -> [(String, BValue)] -> Bool
-searchList searchKey val = hasElem $ map (findKey searchKey) val
+takeKeyValue :: Maybe [Maybe BValue] -> Maybe BValue
+takeKeyValue vals = vals >>= getResult . catMaybes
 
-hasElem :: [a] -> Bool
-hasElem [] = False
-hasElem _ = True
+getResult :: [BValue] -> Maybe BValue
+getResult [] = Nothing
+getResult a = if length a > 1 then Nothing else safeHead a
 
-findKey :: String -> (String, BValue) -> Bool
+searchList :: String -> [(String, BValue)] -> [Maybe BValue]
+searchList searchKey = map (findKey searchKey)
+
+findKey :: String -> (String, BValue) -> Maybe BValue
 findKey searchKey (key, val)
-  | key == searchKey = True
-  | isMap val = keyIsInBValue searchKey val
-  | otherwise = False
+  | key == searchKey = Just val
+  | isMap val = getKeyValue searchKey val
+  | otherwise = Nothing
 
 isMap :: BValue -> Bool
 isMap a = case a of
