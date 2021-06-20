@@ -1,11 +1,13 @@
 module Main where
 
-import Search
+import FileSearch
 import BdbValues
+import FileInsert
 
-testVal :: BValue
-testVal = BMap [("Test",BString "test"),("Ny test",BNumber 3),("nested",BMap [("Inni",BString "HEI PÅ DEG")]),("nummer", BNumber 3)]
+test :: BValue
+test = BMap [("ny", BString "hie"),("detteERKult", BNumber 1),("nes", BMap [("enda en", BString "hei på feg")])]
 
 main :: IO ()
-main = do print $ find "" testVal
-
+main = do
+  res <- searchAsync ("detteERKult", BNumber 1.0)
+  print res

@@ -1,0 +1,41 @@
+module FileInsert where
+
+import BdbValues
+import Utils
+import Search
+import Data.UUID (UUID)
+
+insert :: BValue -> IO BValue
+insert values = do
+  (index, withIndex) <- insertIndex values
+  _ <- writeToFile index withIndex
+  return index
+
+writeToFile :: BValue -> BValue -> IO ()
+writeToFile index vals = writeFile (getFilePath index) (show vals)
+
+getFilePath :: BValue -> String
+getFilePath index = case index of
+  BString i -> "./data/" ++ i ++ ".bdb"
+  _ -> "./data/undefined"
+
+insertIndex :: BValue -> IO (BValue, BValue)
+insertIndex vals = case checkIfHasId vals of
+  Nothing -> addId vals
+  Just a -> return (a, vals)
+
+checkIfHasId :: BValue -> Maybe BValue
+checkIfHasId = getKeyValue "_id"
+
+addId :: BValue -> IO (BValue, BValue)
+addId vals = do
+  uuid <- getUUid
+  return (uuidToBValue uuid, concatId ("_id", BString $ show uuid) vals)
+
+uuidToBValue :: UUID -> BValue
+uuidToBValue uuid = BString $ show uuid
+
+concatId :: (String, BValue) -> BValue -> BValue
+concatId id vals = case vals of
+  BMap val -> BMap $ id:val
+  _ -> vals
