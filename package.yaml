@@ -26,6 +26,7 @@ dependencies:
 - directory
 - uuid
 - async
+- vector
 
 library:
   source-dirs: src
