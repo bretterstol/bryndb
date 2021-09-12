@@ -26,7 +26,11 @@ dependencies:
 - directory
 - uuid
 - async
+<<<<<<< HEAD
 - haskey-btree
+=======
+- vector
+>>>>>>> 2b298e7af9a27f88e9bc096911e51b3af3fc2e65
 
 library:
   source-dirs: src
