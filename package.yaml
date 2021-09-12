@@ -26,6 +26,7 @@ dependencies:
 - directory
 - uuid
 - async
+- haskey-btree
 
 library:
   source-dirs: src
