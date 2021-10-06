@@ -6,13 +6,13 @@ type Keys k = Vector k
 
 type Values v = Vector v
 
-data Leaf k v = Leaf (Keys k) (Values v) (Maybe (Leaf k v))
+data Leaf k v = Leaf (Keys k) (Values v) (Maybe (Leaf k v)) deriving (Show)
 
 type Children k v = Vector (BTree k v)
 
-data Node k v = Node (Keys k) (Children k v)
+data Node k v = Node (Keys k) (Children k v) deriving (Show)
 
-data BTree k v = BTreeNode (Node k v) | BTreeLeaf (Leaf k v)
+data BTree k v = BTreeNode (Node k v) | BTreeLeaf (Leaf k v) deriving (Show)
 
 newtype BTreeRoot k v = BTreeRoot (BTree k v)
 
