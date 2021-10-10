@@ -1,26 +1,45 @@
 module BTree.BTree where
-import Data.List
+import Data.List hiding (insert)
 import BTree.BTreeTypes
 import Utils
 
+treeSize :: Int
+treeSize = 2
+
+createTree :: (Ord k) => k -> v -> BTree k v
+createTree key val = Leaf [Value (key, [val])]
 
 insert :: (Ord k) => k -> v -> BTree k v -> BTree k v
-insert key value Nil = Node [key] [leaf, Nil] where leaf = Leaf (key, [value])
-insert key value tree = insertKeyVal key value tree
+insert key val (Leaf values) = 
+  let vlenght = length values
+      newValues = newValue : values
+      newValue = Value (key, [val])
+  in if vlenght < treeSize then Leaf $ sort newValues
+    else let Value (medianValue, _) = getMedianValue newValues
+         in Node [medianValue] [lowerLeafs medianValue values, higherLeafs medianValue values]
+insert key val (Node keys children) = 
+  let index = getChildIndex key keys
+      child = children !! index
+  in Node keys $ map (\c -> if c == child then insert key val child else c) children
 
 
-insertKeyVal ::(Ord k) => k -> v -> BTree k v -> BTree k v
-insertKeyVal key val Nil = Node [key] [Leaf (key, [val])]
-insertKeyVal key val leaf@(Leaf _) = Node [key] $ sort [leaf, newLeaf] where newLeaf = Leaf (key, [val])
-insertKeyVal key val (Node keys children@[Leaf _, _]) = Node keys [insertKeyVal key val (children !! getChildIndex key keys)]
-insertKeyVal key val (Node keys children) = Node keys $ insertKeyVal key val (children !! getChildIndex key keys) : children
+lowerLeafs :: (Ord a) => a -> [Value a b] -> BTree a b 
+lowerLeafs key values = Leaf $ filterValues (<= key) values
 
+higherLeafs :: (Ord a) => a -> [Value a b] -> BTree a b 
+higherLeafs key values = Leaf $ filterValues (> key) values
 
-findLeaf ::(Ord k) => k -> BTree k v -> BTree k v
-findLeaf _ Nil = Nil
-findLeaf _ leaf@(Leaf _) = leaf
-findLeaf key (Node keys children) = findLeaf key $ children !! getChildIndex key keys
+filterValues :: (a -> Bool) -> [Value a b] -> [Value a b]
+filterValues func = filter (\(Value (a, _)) -> func a)
 
+getMedianValue :: (Ord a) => [Value a b] -> Value a b
+getMedianValue values = sort values !! getMedianIndex values
+
+getMedianIndex :: [Value a b] -> Int
+getMedianIndex = divideByTwo . length
+
+divideByTwo :: Int -> Int
+divideByTwo val = val `div` 2
 
 getChildIndex ::(Ord k) => k -> [k] -> Int
 getChildIndex key keys = case safeHead (getChildIndexes key keys) of
