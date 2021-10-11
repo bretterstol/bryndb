@@ -4,7 +4,7 @@ import BTree.BTreeTypes
 import Utils
 
 treeSize :: Int
-treeSize = 2
+treeSize = 3
 
 createTree :: (Ord k) => k -> v -> BTree k v
 createTree key val = Leaf [Value (key, [val])]
@@ -14,7 +14,7 @@ insert key val (Leaf values) =
   let vlenght = length values
       newValues = sort $ newValue : values
       newValue = Value (key, [val])
-  in if vlenght <= treeSize then Leaf $ newValues
+  in if vlenght <= treeSize then Leaf newValues
     else let Value (medianValue, _) = getMedianValue newValues
          in Node [medianValue] [lowerLeafs medianValue newValues, higherLeafs medianValue newValues] 1
 insert key val (Node keys children size) =
@@ -100,7 +100,7 @@ getHigher key tree = case tree of
 filterEmpty :: (Ord a) => BTree a b -> Bool
 filterEmpty tree = case tree of
   Leaf a -> not (null a)
-  _ -> True
+  Node a _ _ -> not (null a)
 
 refactorInner ::(Ord a) => [a] -> [BTree a b] -> BTree a b
 refactorInner keys children =
@@ -113,19 +113,19 @@ getInnerNode children = head $ getInnerNodes children
 
 
 getBiggestTree :: [BTree a b] -> BTree a b
-getBiggestTree tree = 
+getBiggestTree tree =
   let maxHeight = heighest 0 tree
   in case find (treeHasSize maxHeight) tree of
     Just t -> t
     Nothing -> getInnerNode tree
 
 treeHasSize :: Int -> BTree a b -> Bool
-treeHasSize s tree = case tree of 
-  Leaf _ -> False   
+treeHasSize s tree = case tree of
+  Leaf _ -> False
   Node _ _ hs -> s == hs
 
 heighest :: Int -> [BTree a b] -> Int
-heighest m tree 
+heighest m tree
   | null tree = m
   | otherwise = heighest (highestHeight m (head tree)) (tail tree)
 
