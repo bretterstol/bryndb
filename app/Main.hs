@@ -1,8 +1,6 @@
 module Main where
 
-import FileSearch
 import BdbValues
-import FileInsert
 import qualified BTree.BTree as B
 import BTree.BTreeTypes
 

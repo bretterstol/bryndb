@@ -1,8 +1,8 @@
-module FileSearch where
+module File.FileSearch where
 
 import BdbValues
-import ParserFull
-import Search
+import Parser.BdbParser
+import qualified BValueSearch as S
 import System.Directory
 import Control.Concurrent.Async
 import Data.Either
@@ -17,7 +17,7 @@ searchFiles :: (String,BValue) -> [String] -> [Either String BValue]
 searchFiles key = map (searchFile key)
 
 searchFile :: (String,BValue) -> String -> Either String BValue
-searchFile key file = mapLeft (const "Parse failed") (parseFile file) >>= find key
+searchFile key file = mapLeft (const "Parse failed") (parseFile file) >>= S.find key
 
 searchFileIO :: (String,BValue) -> IO String -> IO (Either String BValue)
 searchFileIO key ioFile = searchFile key <$> ioFile
