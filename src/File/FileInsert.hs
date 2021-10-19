@@ -1,8 +1,8 @@
-module FileInsert where
+module File.FileInsert where
 
 import BdbValues
 import Utils
-import Search
+import qualified BValueSearch as S
 import Data.UUID (UUID)
 
 insert :: BValue -> IO BValue
@@ -25,7 +25,7 @@ insertIndex vals = case checkIfHasId vals of
   Just a -> return (a, vals)
 
 checkIfHasId :: BValue -> Maybe BValue
-checkIfHasId = getKeyValue "_id"
+checkIfHasId = S.getKeyValue "_id"
 
 addId :: BValue -> IO (BValue, BValue)
 addId vals = do

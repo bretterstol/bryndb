@@ -1,4 +1,4 @@
-module ParserFull where
+module Parser.BdbParser where
 
 import Text.ParserCombinators.Parsec
 import BdbValues

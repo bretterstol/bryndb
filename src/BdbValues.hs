@@ -12,17 +12,6 @@ data BValue =
 	BMap [(String, BValue)]
 	deriving (Eq, Show)
 
---instance Show BValue where
---  show value = case value of
---    BNull -> "null"
---    BNumber a -> show a
---    BString a -> a
---    BBool True -> "true"
---    BBool False -> "false"
---    BList as -> intercalate ", " (map show as)
---    BObject as -> intercalate ", " (map showO as)
---	where showO (n, v) = "[" ++ n ++ " : " ++ show v ++ "]"
-
 
 
 convertToBool :: String -> Maybe BValue

@@ -1,4 +1,4 @@
-module Search where
+module BValueSearch where
 import BdbValues
 import Data.Maybe (catMaybes)
 import Utils
