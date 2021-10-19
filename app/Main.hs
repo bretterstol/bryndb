@@ -30,20 +30,24 @@ main = do
   let a4 = BTree.BTree.insert 11 "fsd" a3
   print a4
   let a5 = BTree.BTree.insert 12 "yht" a4
-  --print a5
+  print a5
   let a6 = BTree.BTree.insert 13 "feweer" a5
-  --print a6
+  print a6
   let a7 = BTree.BTree.insert 14 "fqweqwe" a6
-  --print a7
+  print a7
   let a8 = BTree.BTree.insert 15 "ytreyrey" a7
-  --print a8
+  print a8
   let a9 = BTree.BTree.insert 22 "yht" a8
-  --print a9
+  print a9
   let a10 = BTree.BTree.insert (-1) "feweer" a9
-  --print a10
+  print a10
   let a11 = BTree.BTree.insert 31 "fqweqwe" a10
-  --print a11
+  print a11
   let a12 = BTree.BTree.insert 43 "ytreyrey" a11
-  --print a12
-  let a13 =BTree.BTree.insert (-13) "ytreyrey" a12 
+  print a12
+  let a13 =BTree.BTree.insert (54) "ytreyrey" a12
   print a13
+  let a14 =BTree.BTree.insert 30 "ytreyrey" a13
+  print a14
+  let a15 =BTree.BTree.insert 17 "ytreyrey" a14
+  print a15

@@ -4,7 +4,7 @@ import BTree.BTreeTypes
 import Utils
 
 treeSize :: Int
-treeSize = 3
+treeSize = 2
 
 createTree :: (Ord k) => k -> v -> BTree k v
 createTree key val = Leaf [Value (key, [val])]
@@ -61,7 +61,7 @@ refactor keys children size
   | not $ sameHeightChildren children = refactorUpwords $ refactorInner keys children
   | otherwise = refactorUpwords $ Node keys children size
 
-sameHeightChildren ::(Eq a) => [BTree a b] -> Bool
+sameHeightChildren :: [BTree a b] -> Bool
 sameHeightChildren children = all ((== nodeOr0 (head children)) . nodeOr0) children
 
 nodeOr0 :: BTree a b -> Int
@@ -97,7 +97,7 @@ getHigher key tree = case tree of
   Node a b s -> Node (getHigherKeys key a) (map (getHigher key) b) s
   Leaf a -> Leaf (filterValues (> key) a)
 
-filterEmpty :: (Ord a) => BTree a b -> Bool
+filterEmpty :: BTree a b -> Bool
 filterEmpty tree = case tree of
   Leaf a -> not (null a)
   Node a _ _ -> not (null a)
@@ -114,7 +114,7 @@ getInnerNode children = head $ getInnerNodes children
 
 getBiggestTree :: [BTree a b] -> BTree a b
 getBiggestTree tree =
-  let maxHeight = heighest 0 tree
+  let maxHeight = highest 0 tree
   in case find (treeHasSize maxHeight) tree of
     Just t -> t
     Nothing -> getInnerNode tree
@@ -124,10 +124,10 @@ treeHasSize s tree = case tree of
   Leaf _ -> False
   Node _ _ hs -> s == hs
 
-heighest :: Int -> [BTree a b] -> Int
-heighest m tree
+highest :: Int -> [BTree a b] -> Int
+highest m tree
   | null tree = m
-  | otherwise = heighest (highestHeight m (head tree)) (tail tree)
+  | otherwise = highest (highestHeight m (head tree)) (tail tree)
 
 highestHeight :: Int -> BTree a b -> Int
 highestHeight maxSoFar tree = case tree of
