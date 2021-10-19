@@ -1,4 +1,10 @@
-module BTree.BTree where
+module BTree.BTree (
+    insert
+  , find
+  , createTree
+) where
+
+
 import qualified Data.List  as L
 import BTree.BTreeTypes
 import Utils
@@ -12,7 +18,7 @@ createTree key val = Leaf [Value (key, [val])]
 insert :: (Ord k) => k -> v -> BTree k v -> BTree k v
 insert key val (Leaf values) =
   let valueLength = length newValues
-      newValues = L.sort $ Value (key, [val]) : values
+      newValues = addValue key val values
   in if valueLength <= (treeSize + 1) then Leaf newValues
     else let Value (medianValue, _) = getMedianValue newValues
          in Node [medianValue] [lowerLeaves medianValue newValues, higherLeaves medianValue newValues] 1
@@ -22,11 +28,23 @@ insert key val (Node keys children size) =
 
 
 find :: (Ord k) => k -> BTree k v -> Maybe (Value k v)
-find key (Leaf values) =  L.find (\(Value (k, _)) -> key == k) values
+find key (Leaf values) = findKeyInValues key values
 find key (Node keys children _) =
   let child = getChild key keys children
   in find key child
 
+findKeyInValues :: (Ord k) => k -> [Value k v] -> Maybe (Value k v)
+findKeyInValues key = L.find (\(Value (k, _)) -> key == k)
+
+addValue :: (Ord k) => k -> v -> [Value k v] -> [Value k v]
+addValue key value values = case matchedValue of
+  Just matched -> addInnerValue value matched : rest
+  Nothing -> Value (key, [value]) : rest
+  where matchedValue = findKeyInValues key values
+        rest = filter (\(Value (k, _)) -> k /= key) values
+
+addInnerValue :: v -> Value k v -> Value k v
+addInnerValue value (Value (key,innerValues)) = Value (key, value : innerValues)
 
 getChild :: (Ord k) =>  k -> [k] -> [BTree k v] -> BTree k v
 getChild key keys children = children !! index 

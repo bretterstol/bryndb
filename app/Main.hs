@@ -31,4 +31,5 @@ main = do
   let a13 =BTree.BTree.insert (54) "ytreyrey" a12
   let a14 =BTree.BTree.insert 30 "ytreyrey" a13
   let a15 =BTree.BTree.insert 17 "ytreyrey" a14
-  print $ find 20 a15
+  let a16 = BTree.BTree.insert 14 "ytreyrey" a15
+  print $ find 14 a16
