@@ -164,9 +164,6 @@ highestHeight maxSoFar tree = case tree of
 getInnerNodes :: [BTree a b] -> [BTree a b]
 getInnerNodes = filter isNode
 
-getInnerLeaves :: [BTree a b] -> [BTree a b]
-getInnerLeaves = filter isLeaf
-
 isNode :: BTree a b -> Bool
 isNode tree = case tree of
   Node {} -> True
@@ -176,11 +173,4 @@ isLeaf :: BTree a b -> Bool
 isLeaf tree = case tree of
   Leaf _ -> True
   _ -> False
-
-allSameType :: [BTree a b] -> Bool
-allSameType children = all (sameType (head children)) $ tail children
-
-sameType :: BTree a b -> BTree a b -> Bool
-sameType (Leaf _) (Leaf _) = True
-sameType Node {} Node {} = True
-sameType _ _ = False
+  
