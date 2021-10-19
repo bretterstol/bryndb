@@ -11,12 +11,11 @@ createTree key val = Leaf [Value (key, [val])]
 
 insert :: (Ord k) => k -> v -> BTree k v -> BTree k v
 insert key val (Leaf values) =
-  let vlenght = length newValues
-      newValues = L.sort $ newValue : values
-      newValue = Value (key, [val])
-  in if vlenght <= (treeSize + 1) then Leaf newValues
+  let valueLength = length newValues
+      newValues = L.sort $ Value (key, [val]) : values
+  in if valueLength <= (treeSize + 1) then Leaf newValues
     else let Value (medianValue, _) = getMedianValue newValues
-         in Node [medianValue] [lowerLeafs medianValue newValues, higherLeafs medianValue newValues] 1
+         in Node [medianValue] [lowerLeaves medianValue newValues, higherLeaves medianValue newValues] 1
 insert key val (Node keys children size) =
   let child = getChild key keys children
   in refactor keys (map (\c -> if c == child then insert key val child else c) children) size
@@ -33,11 +32,11 @@ getChild :: (Ord k) =>  k -> [k] -> [BTree k v] -> BTree k v
 getChild key keys children = children !! index 
   where index = getChildIndex key keys
 
-lowerLeafs :: (Ord a) => a -> [Value a b] -> BTree a b
-lowerLeafs key values = Leaf $ filterValues (<= key) values
+lowerLeaves :: (Ord a) => a -> [Value a b] -> BTree a b
+lowerLeaves key values = Leaf $ filterValues (<= key) values
 
-higherLeafs :: (Ord a) => a -> [Value a b] -> BTree a b
-higherLeafs key values = Leaf $ filterValues (> key) values
+higherLeaves :: (Ord a) => a -> [Value a b] -> BTree a b
+higherLeaves key values = Leaf $ filterValues (> key) values
 
 filterValues :: (a -> Bool) -> [Value a b] -> [Value a b]
 filterValues func =  filter (\(Value (a, _)) -> func a)
@@ -115,8 +114,8 @@ filterEmpty tree = case tree of
 refactorInner ::(Ord a) => [a] -> [BTree a b] -> BTree a b
 refactorInner keys children =
   let  node@(Node innK innC size) = getBiggestTree children
-       leafs = filter (/= node) children
-  in Node (L.sort $ keys ++ innK) (L.sort $ innC ++ leafs) size
+       leaves = filter (/= node) children
+  in Node (L.sort $ keys ++ innK) (L.sort $ innC ++ leaves) size
 
 getInnerNode :: [BTree a b] -> BTree a b
 getInnerNode children = head $ getInnerNodes children
@@ -147,8 +146,8 @@ highestHeight maxSoFar tree = case tree of
 getInnerNodes :: [BTree a b] -> [BTree a b]
 getInnerNodes = filter isNode
 
-getInnerLeafs :: [BTree a b] -> [BTree a b]
-getInnerLeafs = filter isLeaf
+getInnerLeaves :: [BTree a b] -> [BTree a b]
+getInnerLeaves = filter isLeaf
 
 isNode :: BTree a b -> Bool
 isNode tree = case tree of
@@ -161,7 +160,7 @@ isLeaf tree = case tree of
   _ -> False
 
 allSameType :: [BTree a b] -> Bool
-allSameType children = all (sameType (head children)) children
+allSameType children = all (sameType (head children)) $ tail children
 
 sameType :: BTree a b -> BTree a b -> Bool
 sameType (Leaf _) (Leaf _) = True
