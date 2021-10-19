@@ -1,27 +1,37 @@
 module BTree.BTree where
-import Data.List hiding (insert)
+import qualified Data.List  as L
 import BTree.BTreeTypes
 import Utils
 
 treeSize :: Int
 treeSize = 2
 
-createTree :: (Ord k) => k -> v -> BTree k v
+createTree :: k -> v -> BTree k v
 createTree key val = Leaf [Value (key, [val])]
 
 insert :: (Ord k) => k -> v -> BTree k v -> BTree k v
 insert key val (Leaf values) =
-  let vlenght = length values
-      newValues = sort $ newValue : values
+  let vlenght = length newValues
+      newValues = L.sort $ newValue : values
       newValue = Value (key, [val])
-  in if vlenght <= treeSize then Leaf newValues
+  in if vlenght <= (treeSize + 1) then Leaf newValues
     else let Value (medianValue, _) = getMedianValue newValues
          in Node [medianValue] [lowerLeafs medianValue newValues, higherLeafs medianValue newValues] 1
 insert key val (Node keys children size) =
-  let index = getChildIndex key keys
-      child = children !! index
+  let child = getChild key keys children
   in refactor keys (map (\c -> if c == child then insert key val child else c) children) size
 
+
+find :: (Ord k) => k -> BTree k v -> Maybe (Value k v)
+find key (Leaf values) =  L.find (\(Value (k, _)) -> key == k) values
+find key (Node keys children _) =
+  let child = getChild key keys children
+  in find key child
+
+
+getChild :: (Ord k) =>  k -> [k] -> [BTree k v] -> BTree k v
+getChild key keys children = children !! index 
+  where index = getChildIndex key keys
 
 lowerLeafs :: (Ord a) => a -> [Value a b] -> BTree a b
 lowerLeafs key values = Leaf $ filterValues (<= key) values
@@ -34,14 +44,14 @@ filterValues func =  filter (\(Value (a, _)) -> func a)
 
 getMedianValue :: (Ord a) => [Value a b] -> Value a b
 getMedianValue values
-  | odd (length values) && (length values > 1) = sort values !!(getMedianIndex values + 1)
- | otherwise = sort values !! getMedianIndex values
+  | odd (length values) && (length values > 1) = L.sort values !!(getMedianIndex values + 1)
+ | otherwise = L.sort values !! getMedianIndex values
 
 getMedianIndex :: [a] -> Int
 getMedianIndex = divideByTwo . length
 
 getMedian :: (Ord a) => [a] -> a
-getMedian keys = sort keys !! getMedianIndex keys
+getMedian keys = L.sort keys !! getMedianIndex keys
 
 divideByTwo :: Int -> Int
 divideByTwo val = val `div` 2
@@ -53,13 +63,13 @@ getChildIndex key keys = case safeHead (getChildIndexes key keys) of
 
 
 getChildIndexes :: (Ord k) => k -> [k] -> [Int]
-getChildIndexes key = findIndices (key <=)
+getChildIndexes key = L.findIndices (key <=)
 
 refactor :: (Ord a) => [a] -> [BTree a b] -> Int -> BTree a b
 refactor keys children size
   | all isLeaf children = Node keys children size
-  | not $ sameHeightChildren children = refactorUpwords $ refactorInner keys children
-  | otherwise = refactorUpwords $ Node keys children size
+  | not $ sameHeightChildren children = refactorUpwards $ refactorInner keys children
+  | otherwise = refactorUpwards $ Node keys children size
 
 sameHeightChildren :: [BTree a b] -> Bool
 sameHeightChildren children = all ((== nodeOr0 (head children)) . nodeOr0) children
@@ -69,9 +79,9 @@ nodeOr0 tree = case tree of
   Node _ _ s -> s
   _ -> 0
 
-refactorUpwords :: (Ord a) => BTree a b -> BTree a b
-refactorUpwords leaf@(Leaf _) = leaf
-refactorUpwords node@(Node keys values height)
+refactorUpwards :: (Ord a) => BTree a b -> BTree a b
+refactorUpwards leaf@(Leaf _) = leaf
+refactorUpwards node@(Node keys values height)
   | length keys <= treeSize = node
   | otherwise =
     let median = getMedian keys
@@ -106,7 +116,7 @@ refactorInner ::(Ord a) => [a] -> [BTree a b] -> BTree a b
 refactorInner keys children =
   let  node@(Node innK innC size) = getBiggestTree children
        leafs = filter (/= node) children
-  in Node (sort $ keys ++ innK) (sort $ innC ++ leafs) size
+  in Node (L.sort $ keys ++ innK) (L.sort $ innC ++ leafs) size
 
 getInnerNode :: [BTree a b] -> BTree a b
 getInnerNode children = head $ getInnerNodes children
@@ -115,7 +125,7 @@ getInnerNode children = head $ getInnerNodes children
 getBiggestTree :: [BTree a b] -> BTree a b
 getBiggestTree tree =
   let maxHeight = highest 0 tree
-  in case find (treeHasSize maxHeight) tree of
+  in case L.find (treeHasSize maxHeight) tree of
     Just t -> t
     Nothing -> getInnerNode tree
 
