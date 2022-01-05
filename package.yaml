@@ -26,6 +26,7 @@ dependencies:
 - directory
 - uuid
 - async
+- stm
 
 library:
   source-dirs: src

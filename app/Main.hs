@@ -3,12 +3,21 @@ module Main where
 import BdbValues
 import qualified BTree.BTree as B
 import BTree.BTreeTypes
+import Control.Concurrent.STM
 
 test :: BValue
 test = BMap [("ny", BString "hie"),("detteERKult", BNumber 1),("nes", BMap [("enda en", BString "hei på feg")])]
 
 tree :: BTree Int String
 tree = B.insert 3 "seg" (B.createTree 2 "hei")
+
+
+indexStore :: IO (TVar [(String, BTree Int String)])
+indexStore = newTVarIO []
+
+updateIndexStore ::   BTree Int String -> [(String, BTree Int String)]-> [(String, BTree Int String)]
+updateIndexStore test store = ("Test", test) : store
+
 main :: IO ()
 main = do
   let newTree = B.insert 4 "halla" tree
@@ -30,4 +39,10 @@ main = do
   let a14 =B.insert 30 "ytreyrey" a13
   let a15 =B.insert 17 "ytreyrey" a14
   let a16 = B.insert 14 "ytreyrey" a15
-  print $ B.find 14 a16
+  myStore <- indexStore
+  atomically $ modifyTVar' myStore $ updateIndexStore a16
+  indexes <- readTVarIO myStore
+  mapM_ (\(name, tree) -> do 
+    print name
+    print $ B.find 14 tree
+    ) indexes
