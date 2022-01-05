@@ -15,34 +15,37 @@ tree = B.insert 3 "seg" (B.createTree 2 "hei")
 indexStore :: IO (TVar [(String, BTree Int String)])
 indexStore = newTVarIO []
 
-updateIndexStore ::   BTree Int String -> [(String, BTree Int String)]-> [(String, BTree Int String)]
-updateIndexStore test store = ("Test", test) : store
+updateIndexStore ::  String -> BTree Int String -> [(String, BTree Int String)]-> [(String, BTree Int String)]
+updateIndexStore name test store = (name, test) : store
+
+creatingADummyIndex :: BTree Int String
+creatingADummyIndex = B.insert 4 "halla" $
+   B.insert 5 "sekjfsd" $
+   B.insert 7 "sed" $
+   B.insert 6 "sd" $
+   B.insert 16 "s" $
+   B.insert 10 "fsd" $
+   B.insert 11 "fsd" $
+   B.insert 12 "yht" $
+   B.insert 13 "feweer" $
+   B.insert 14 "fqweqwe" $
+   B.insert 15 "ytreyrey" $
+   B.insert 22 "yht" $
+   B.insert (-1) "feweer" $
+  B.insert 31 "fqweqwe"  $
+  B.insert 43 "ytreyrey" $
+  B.insert 54 "ytreyrey" $
+  B.insert 30 "ytreyrey" $
+  B.insert 17 "ytreyrey" $
+  B.insert 14 "ytreyrey" tree
 
 main :: IO ()
 main = do
-  let newTree = B.insert 4 "halla" tree
-  let next = B.insert 5 "sekjfsd" newTree
-  let a =  B.insert 7 "sed" next
-  let a1 =  B.insert 6 "sd" a
-  let a2 =  B.insert 16 "s" a1
-  let a3 = B.insert 10 "fsd" a2
-  let a4 = B.insert 11 "fsd" a3
-  let a5 = B.insert 12 "yht" a4
-  let a6 = B.insert 13 "feweer" a5
-  let a7 = B.insert 14 "fqweqwe" a6
-  let a8 = B.insert 15 "ytreyrey" a7
-  let a9 = B.insert 22 "yht" a8
-  let a10 = B.insert (-1) "feweer" a9
-  let a11 = B.insert 31 "fqweqwe" a10
-  let a12 = B.insert 43 "ytreyrey" a11
-  let a13 =B.insert 54 "ytreyrey" a12
-  let a14 =B.insert 30 "ytreyrey" a13
-  let a15 =B.insert 17 "ytreyrey" a14
-  let a16 = B.insert 14 "ytreyrey" a15
+  let dummy = creatingADummyIndex
   myStore <- indexStore
-  atomically $ modifyTVar' myStore $ updateIndexStore a16
+  atomically $ modifyTVar' myStore $ updateIndexStore "test" dummy
   indexes <- readTVarIO myStore
-  mapM_ (\(name, tree) -> do 
+  mapM_ (\(name, tree) -> do
     print name
     print $ B.find 14 tree
     ) indexes
