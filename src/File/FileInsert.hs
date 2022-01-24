@@ -5,10 +5,10 @@ import Utils
 import qualified BValueSearch as S
 import Data.UUID (UUID)
 
-insert :: BValue -> IO BValue
+insert :: BValue -> IO String
 insert values = do
-  (index, withIndex) <- insertIndex values
-  _ <- writeToFile index withIndex
+  (bString@(BString index), withIndex) <- insertIndex values
+  _ <- writeToFile bString withIndex
   return index
 
 writeToFile :: BValue -> BValue -> IO ()
