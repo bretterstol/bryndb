@@ -26,6 +26,8 @@ dependencies:
 - directory
 - uuid
 - async
+- stm
+- containers
 
 library:
   source-dirs: src
