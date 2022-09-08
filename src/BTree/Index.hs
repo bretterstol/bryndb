@@ -1,4 +1,4 @@
-module Index where
+module BTree.Index where
 
 
 import Control.Concurrent.STM

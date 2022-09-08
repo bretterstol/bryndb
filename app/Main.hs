@@ -4,8 +4,9 @@ import BdbValues
 import qualified BTree.BTree as B
 import BTree.BTreeTypes
 import Control.Concurrent.STM
-import qualified Index as I
+import qualified BTree.Index as I
 import qualified File.FileInsert as File
+import qualified Data.Map as M
 
 test :: BValue
 test = BMap [("nyt", BString "hie"),("detteERKult", BNumber 1),("nes", BMap [("enda en", BString "hei på feg")]), ("ny", BString "ENDA EN TEST")]
@@ -24,7 +25,8 @@ main = do
   atomically $ I.insertBMap  fileIndex test tree indexDict 
   atomically $ I.insertBMap  fileIndex2 test2 tree indexDict 
   val <- atomically $ readTVar indexDict
-  print val 
+  let t = M.lookup "detteERKult" val
+  print t
   
   
 
