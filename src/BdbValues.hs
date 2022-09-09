@@ -3,14 +3,14 @@ module BdbValues where
 import Text.Read (readMaybe)
 
 
-data BValue =
-	BNull |
-	BNumber Float |
+data BValue = 
+  BNull |
+  BNumber Float |
 	BString String |
 	BBool Bool |
 	BList [BValue] |
 	BMap [(String, BValue)]
-	deriving (Eq, Show)
+	deriving (Eq, Show, Ord)
 
 
 

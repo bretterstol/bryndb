@@ -3,7 +3,7 @@ module BTree.BTreeTypes where
 
 newtype Value a b = Value (a, [b]) deriving Show
 
-data BTree a b = Leaf [Value a b] | Node [a] [BTree a b]  Int deriving (Show)
+data BTree a b = Leaf [Value a b] | Node [a] [BTree a b] Int deriving (Show)
 
 instance (Eq a) => Eq (Value a b) where
   (Value (a1, _)) == (Value (a2, _)) = a1 == a2
